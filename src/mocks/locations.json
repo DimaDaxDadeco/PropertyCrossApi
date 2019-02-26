@@ -1,0 +1,30 @@
+[
+  {
+    "center_lat": 51.202359,
+    "center_long": -0.492375,
+    "long_title": "Albury, Guildford",
+    "place_name": "albury_guildford",
+    "title": "Albury"
+  },
+  {
+    "center_lat": 52.661099,
+    "center_long": -2.3504,
+    "long_title": "Shifnal",
+    "place_name": "shifnal",
+    "title": "Shifnal"
+  },
+  {
+    "center_lat": 51.862154,
+    "center_long": 0.046865,
+    "long_title": "Albury, Ware",
+    "place_name": "albury_ware",
+    "title": "Albury"
+  },
+  {
+    "center_lat": 51.424808,
+    "center_long": -1.340079,
+    "long_title": "Albury, Newbury",
+    "place_name": "albury_newbury",
+    "title": "Albury"
+  }
+]
