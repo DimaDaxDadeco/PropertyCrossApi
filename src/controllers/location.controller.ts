@@ -14,15 +14,13 @@ export const searchLocationsByName = async (ctx: Koa.Context) => {
       },
     );
     if (!locations.length) {
-      ctx.status = HttpStatus.NOT_FOUND;
-      ctx.body = new LocationsNotFoundError();
+      ctx.throw(HttpStatus.NOT_FOUND, new LocationsNotFoundError());
       return;
     }
     ctx.body = locations;
     ctx.status = HttpStatus.OK;
   } else {
-    ctx.status = HttpStatus.BAD_REQUEST;
-    ctx.body = new BadRequestError();
+    ctx.throw(HttpStatus.BAD_REQUEST, new BadRequestError());
   }
 };
 
@@ -30,22 +28,24 @@ export const searchLocationByCoordinates = async (ctx: Koa.Context) => {
   if (ctx.query.lat && ctx.query.long) {
     const { lat, long } = ctx.query;
     const locationRepo: Repository<Location> = getRepository(Location);
+    const LOWER_LAT_LIMIT = parseFloat(lat) - 0.01;
+    const HIGHER_LAT_LIMIT = parseFloat(lat) + 0.01;
+    const LOWER_LONG_LIMIT = parseFloat(long) - 0.01;
+    const HIGHER_LONG_LIMIT = parseFloat(long) + 0.01;
     const locations = await locationRepo.find(
       {
-        centerLat: Between(lat - 0.01, lat + 0.01),
-        centerLong: Between(long - 0.01, long + 0.01),
+        centerLat: Between(LOWER_LAT_LIMIT, HIGHER_LAT_LIMIT),
+        centerLong: Between(LOWER_LONG_LIMIT, HIGHER_LONG_LIMIT),
       },
     );
     if (!locations.length) {
-      ctx.status = HttpStatus.NOT_FOUND;
-      ctx.body = new LocationsNotFoundError();
+      ctx.throw(HttpStatus.NOT_FOUND, new LocationsNotFoundError());
       return;
     }
     ctx.body = locations;
     ctx.status = HttpStatus.OK;
   } else {
-    ctx.status = HttpStatus.BAD_REQUEST;
-    ctx.body = new BadRequestError();
+    ctx.throw(HttpStatus.BAD_REQUEST, new BadRequestError());
   }
 };
 
@@ -62,8 +62,7 @@ export const getPropertiesByLocation = async (ctx: Koa.Context) => {
     },
   );
   if (!result.length) {
-    ctx.status = HttpStatus.NOT_FOUND;
-    ctx.body = new PropertiesNotFoundError();
+    ctx.throw(HttpStatus.NOT_FOUND, new PropertiesNotFoundError());
     return;
   }
   ctx.body = {
@@ -80,8 +79,7 @@ export const getPropertyById = async (ctx: Koa.Context) => {
   const location = await locationRepo.findOne({ placeName: ctx.params.placeName });
   const property = await propertyRepo.findOne({ location, id: ctx.params.id });
   if (!property) {
-    ctx.status = HttpStatus.NOT_FOUND;
-    ctx.body = new PropertiesNotFoundError();
+    ctx.throw(HttpStatus.NOT_FOUND, new PropertiesNotFoundError());
     return;
   }
   ctx.body = property;
