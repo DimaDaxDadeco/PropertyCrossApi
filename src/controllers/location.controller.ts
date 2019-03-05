@@ -57,6 +57,7 @@ export const getPropertiesByLocation = async (ctx: Koa.Context) => {
   const [result, total] = await propertyRepo.findAndCount(
     {
       where: { location },
+      relations: ['location'],
       skip: 10 * (page - 1),
       take: 10,
     },
@@ -65,8 +66,11 @@ export const getPropertiesByLocation = async (ctx: Koa.Context) => {
     ctx.throw(HttpStatus.NOT_FOUND, new PropertiesNotFoundError());
     return;
   }
+  const hasMore = (page * 10) <= total;
   ctx.body = {
-    page,
+    hasMore,
+    location,
+    page: parseInt(page, 10),
     properties: result,
     totalResults: total,
   };
@@ -82,6 +86,7 @@ export const getPropertyById = async (ctx: Koa.Context) => {
     ctx.throw(HttpStatus.NOT_FOUND, new PropertiesNotFoundError());
     return;
   }
+  property.location = location;
   ctx.body = property;
   ctx.status = HttpStatus.OK;
 };
